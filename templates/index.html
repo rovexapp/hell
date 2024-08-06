@@ -19,7 +19,11 @@
     </div>
     <div id="trade">
         <h2>التداول</h2>
-        <p>قسم التداول سيكون متاحًا قريبًا.</p>
+        <p>قم بإدخال كمية العملة وتحديد نوع العملية:</p>
+        <input type="number" id="amount" placeholder="كمية العملة">
+        <button id="buy-button">شراء</button>
+        <button id="sell-button">بيع</button>
+        <p id="trade-status"></p>
     </div>
 
     <script>
@@ -33,12 +37,42 @@
                 });
         });
 
-        document.getElementById('invite-button').addEventListener('click', function() {
+                document.getElementById('invite-button').addEventListener('click', function() {
             fetch('/api/get_user/' + userId)
                 .then(response => response.json())
                 .then(data => {
                     document.getElementById('invite-count').innerText = `لقد دعوت ${data.invites} صديقًا وحصلت على ${data.currency} عملات.`;
                 });
+        });
+
+        document.getElementById('buy-button').addEventListener('click', function() {
+            let amount = document.getElementById('amount').value;
+            fetch('/api/trade', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ user_id: userId, amount: amount, action: 'buy' }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('trade-status').innerText = `تمت عملية الشراء بنجاح!`;
+            });
+        });
+
+        document.getElementById('sell-button').addEventListener('click', function() {
+            let amount = document.getElementById('amount').value;
+            fetch('/api/trade', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ user_id: userId, amount: amount, action: 'sell' }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('trade-status').innerText = `تمت عملية البيع بنجاح!`;
+            });
         });
     </script>
 </body>
