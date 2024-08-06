@@ -46,3 +46,30 @@ def handle_query(call):
         bot.send_message(call.message.chat.id, "قسم التداول سيكون متاحًا قريبًا.")
 
 bot.polling()
+@bot.message_handler(commands=['invite'])
+def invite_friend(message):
+    inviter_id = message.from_user.id
+    invited_user_id = int(message.text.split()[1])  # assuming the command is /invite <user_id>
+
+    cursor.execute('INSERT INTO invites (user_id, invited_user_id) VALUES (?, ?)', (inviter_id, invited_user_id))
+    conn.commit()
+
+    # تحديث دعوات المستخدم والمكافآت
+    cursor.execute('SELECT invites FROM users WHERE user_id = ?', (inviter_id,))
+    invites = cursor.fetchone()[0] + 1
+    reward = 10000
+    if invites == 5:
+        reward += 100000
+    elif invites == 10:
+        reward += 300000
+    elif invites == 20:
+        reward += 1000000
+    elif invites == 50:
+        reward += 5000000
+    elif invites == 100:
+        reward += 15000000
+
+    cursor.execute('UPDATE users SET invites = ?, currency = currency + ? WHERE user_id = ?', (invites, reward, inviter_id))
+    conn.commit()
+
+    bot.send_message(message.chat.id, f"لقد دعوت {invites} أصدقاء وحصلت على {reward} عملة.")
