@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تطبيق تداول HELLO</title>
+</head>
+<body>
+    <h1>تطبيق تداول HELLO</h1>
+    <div id="collect-currency">
+        <h2>جمع العملة</h2>
+        <p id="currency-count">لديك 0 نقرات و 0 عملات.</p>
+        <button id="collect-button">جمع</button>
+    </div>
+    <div id="invite-friends">
+        <h2>المهام ودعوات الأصدقاء</h2>
+        <p id="invite-count">لقد دعوت 0 صديقًا وحصلت على 0 عملات.</p>
+        <button id="invite-button">دعوة صديق</button>
+    </div>
+    <div id="trade">
+        <h2>التداول</h2>
+        <p>قسم التداول سيكون متاحًا قريبًا.</p>
+    </div>
+
+    <script>
+        let userId = 1;  // استبدل هذه القيمة بمعرف المستخدم الفعلي
+
+        document.getElementById('collect-button').addEventListener('click', function() {
+            fetch('/api/get_user/' + userId)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('currency-count').innerText = `لديك ${data.clicks} نقرات و ${data.currency} عملات.`;
+                });
+        });
+
+        document.getElementById('invite-button').addEventListener('click', function() {
+            fetch('/api/get_user/' + userId)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('invite-count').innerText = `لقد دعوت ${data.invites} صديقًا وحصلت على ${data.currency} عملات.`;
+                });
+        });
+    </script>
+</body>
+</html>
